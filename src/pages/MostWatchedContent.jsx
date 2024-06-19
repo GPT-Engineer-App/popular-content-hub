@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Box, Heading, VStack, Spinner, Select, Text, Alert, AlertIcon, AlertTitle, AlertDescription } from '@chakra-ui/react';
 import axios from 'axios';
 import { fetchRottenTomatoesRatings, fetchImdbRatings, fetchOmdbRatings, fetchTmdbRatings } from '../utils/ratings';
+
+import debounce from 'lodash.debounce';
 
 const MostWatchedContent = () => {
   // State variables
@@ -12,6 +14,9 @@ const MostWatchedContent = () => {
   const [genres, setGenres] = useState(['Action', 'Comedy', 'Drama', 'Horror', 'Sci-Fi']);
   const [weeklySummary, setWeeklySummary] = useState(null);
   const [error, setError] = useState(null);
+
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
 
   const fetchWeeklySummary = async () => {
     try {
@@ -29,8 +34,8 @@ const MostWatchedContent = () => {
     }
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
+  const fetchData = useCallback(
+    debounce(async (page) => {
       setLoading(true);
       setError(null);
       try {
@@ -49,18 +54,32 @@ const MostWatchedContent = () => {
           tmdb: tmdbData,
         };
 
-        setContent([combinedData]);
+        setContent((prevContent) => [...prevContent, combinedData]);
+        setHasMore(rottenTomatoesData.length > 0); // Example condition, replace with actual logic
       } catch (error) {
         console.error('Error fetching data:', error);
         setError('Failed to fetch content data.');
       } finally {
         setLoading(false);
       }
-    };
+    }, 500),
+    [filters, sorting]
+  );
 
-    fetchData();
+  useEffect(() => {
+    fetchData(page);
     fetchWeeklySummary();
-  }, [filters, sorting]);
+  }, [filters, sorting, page]);
+
+  const handleScroll = () => {
+    if (window.innerHeight + document.documentElement.scrollTop !== document.documentElement.offsetHeight || loading) return;
+    setPage((prevPage) => prevPage + 1);
+  };
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [loading]);
 
   return (
     <Box p={4}>
