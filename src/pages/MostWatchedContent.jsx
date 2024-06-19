@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Heading, VStack, Spinner, Select, Text } from '@chakra-ui/react';
+import { fetchRottenTomatoesRatings, fetchImdbRatings, fetchOmdbRatings, fetchTmdbRatings } from '../utils/ratings';
 
 const MostWatchedContent = () => {
   // State variables
@@ -10,7 +11,36 @@ const MostWatchedContent = () => {
   const [genres, setGenres] = useState(['Action', 'Comedy', 'Drama', 'Horror', 'Sci-Fi']);
   const [weeklySummary, setWeeklySummary] = useState(null);
 
-  // Initial UI without data fetching
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const title = 'Inception'; // Example title, replace with dynamic title
+        const rottenTomatoesData = await fetchRottenTomatoesRatings(title);
+        const imdbData = await fetchImdbRatings(title);
+        const omdbData = await fetchOmdbRatings(title);
+        const tmdbData = await fetchTmdbRatings(title);
+
+        // Combine data from all sources
+        const combinedData = {
+          title,
+          rottenTomatoes: rottenTomatoesData,
+          imdb: imdbData,
+          omdb: omdbData,
+          tmdb: tmdbData,
+        };
+
+        setContent([combinedData]);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   return (
     <Box p={4}>
       <Heading mb={4}>Most Watched Content</Heading>
@@ -51,6 +81,10 @@ const MostWatchedContent = () => {
               content.map((item, index) => (
                 <Box key={index} p={4} borderWidth="1px" borderRadius="lg">
                   <Text>{item.title}</Text>
+                  <Text>Rotten Tomatoes: {item.rottenTomatoes ? item.rottenTomatoes.total : 'N/A'}</Text>
+                  <Text>IMDb: {item.imdb ? item.imdb.total : 'N/A'}</Text>
+                  <Text>OMDb: {item.omdb ? item.omdb.total : 'N/A'}</Text>
+                  <Text>TMDb: {item.tmdb ? item.tmdb.total : 'N/A'}</Text>
                 </Box>
               ))
             )}
