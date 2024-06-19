@@ -26,6 +26,7 @@
         "axios": "^1.7.2",
         "dotenv": "^16.4.5",
         "framer-motion": "^10.16.15",
+        "lodash.debounce": "^4.0.8",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
         "react-icons": "^4.12.0",
