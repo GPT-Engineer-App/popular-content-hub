@@ -18,7 +18,7 @@ const MostWatchedContent = () => {
       if (cachedSummary) {
         setWeeklySummary(JSON.parse(cachedSummary));
       } else {
-        const response = await fetch('https://api.example.com/weekly-summary'); // Replace with actual API endpoint
+        const response = await fetch('https://new-api.example.com/weekly-summary'); // Replace with actual new API endpoint
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -36,7 +36,7 @@ const MostWatchedContent = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`https://api.example.com/content?page=${page}&type=${filters.type}&genre=${filters.genre}&sort=${sorting}`);
+      const response = await fetch(`https://new-api.example.com/content?page=${page}&type=${filters.type}&genre=${filters.genre}&sort=${sorting}`);
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
