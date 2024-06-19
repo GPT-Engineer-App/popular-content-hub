@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Heading, VStack, Spinner, Select, Text } from '@chakra-ui/react';
+import axios from 'axios';
 import { fetchRottenTomatoesRatings, fetchImdbRatings, fetchOmdbRatings, fetchTmdbRatings } from '../utils/ratings';
 
 const MostWatchedContent = () => {
@@ -10,6 +11,15 @@ const MostWatchedContent = () => {
   const [sorting, setSorting] = useState('views');
   const [genres, setGenres] = useState(['Action', 'Comedy', 'Drama', 'Horror', 'Sci-Fi']);
   const [weeklySummary, setWeeklySummary] = useState(null);
+
+  const fetchWeeklySummary = async () => {
+    try {
+      const response = await axios.get('https://api.example.com/weekly-summary'); // Replace with actual API endpoint
+      setWeeklySummary(response.data);
+    } catch (error) {
+      console.error('Error fetching weekly summary:', error);
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,6 +49,7 @@ const MostWatchedContent = () => {
     };
 
     fetchData();
+    fetchWeeklySummary();
   }, [filters, sorting]);
 
   return (
