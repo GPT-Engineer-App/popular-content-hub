@@ -23,12 +23,16 @@ const MostWatchedContent = () => {
           throw new Error('Network response was not ok');
         }
         const data = await response.json();
-        localStorage.setItem('weeklySummary', JSON.stringify(data));
-        setWeeklySummary(data);
+        if (data && data.summary) {
+          localStorage.setItem('weeklySummary', JSON.stringify(data.summary));
+          setWeeklySummary(data.summary);
+        } else {
+          throw new Error('Weekly summary not available');
+        }
       }
     } catch (error) {
       console.error('Error fetching weekly summary:', error);
-      setError('Failed to fetch weekly summary.');
+      setError('Failed to fetch weekly summary. Weekly summary not available.');
     }
   };
 
@@ -124,6 +128,12 @@ const MostWatchedContent = () => {
           <Heading size="md">Weekly Summary</Heading>
           {weeklySummary ? (
             <Text>{weeklySummary}</Text>
+          ) : error ? (
+            <Alert status="error">
+              <AlertIcon />
+              <AlertTitle>Error!</AlertTitle>
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
           ) : (
             <Text>No summary available</Text>
           )}
