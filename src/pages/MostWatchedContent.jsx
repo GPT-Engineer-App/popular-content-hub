@@ -15,8 +15,14 @@ const MostWatchedContent = () => {
 
   const fetchWeeklySummary = async () => {
     try {
-      const response = await axios.get('https://api.example.com/weekly-summary'); // Replace with actual API endpoint
-      setWeeklySummary(response.data);
+      const cachedSummary = localStorage.getItem('weeklySummary');
+      if (cachedSummary) {
+        setWeeklySummary(JSON.parse(cachedSummary));
+      } else {
+        const response = await axios.get('https://api.example.com/weekly-summary'); // Replace with actual API endpoint
+        localStorage.setItem('weeklySummary', JSON.stringify(response.data));
+        setWeeklySummary(response.data);
+      }
     } catch (error) {
       console.error('Error fetching weekly summary:', error);
       setError('Failed to fetch weekly summary.');
