@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Box, Heading, VStack, Spinner, Select, Text, Alert, AlertIcon, AlertTitle, AlertDescription } from '@chakra-ui/react';
 import axios from 'axios';
-import { fetchRottenTomatoesRatings, fetchImdbRatings, fetchOmdbRatings, fetchTmdbRatings } from '../utils/ratings';
-
 import debounce from 'lodash.debounce';
 
 const MostWatchedContent = () => {
@@ -39,23 +37,19 @@ const MostWatchedContent = () => {
       setLoading(true);
       setError(null);
       try {
-        const title = 'Inception'; // Example title, replace with dynamic title
-        const rottenTomatoesData = await fetchRottenTomatoesRatings(title, filters, sorting);
-        const imdbData = await fetchImdbRatings(title, filters, sorting);
-        const omdbData = await fetchOmdbRatings(title, filters, sorting);
-        const tmdbData = await fetchTmdbRatings(title, filters, sorting);
+        const response = await axios.get('https://api.example.com/content', {
+          params: {
+            page,
+            type: filters.type,
+            genre: filters.genre,
+            sort: sorting,
+          },
+        });
 
-        // Combine data from all sources
-        const combinedData = {
-          title,
-          rottenTomatoes: rottenTomatoesData,
-          imdb: imdbData,
-          omdb: omdbData,
-          tmdb: tmdbData,
-        };
+        const data = response.data;
 
-        setContent((prevContent) => [...prevContent, combinedData]);
-        setHasMore(rottenTomatoesData.length > 0); // Example condition, replace with actual logic
+        setContent((prevContent) => [...prevContent, ...data]);
+        setHasMore(data.length > 0); // Example condition, replace with actual logic
       } catch (error) {
         console.error('Error fetching data:', error);
         setError('Failed to fetch content data.');
