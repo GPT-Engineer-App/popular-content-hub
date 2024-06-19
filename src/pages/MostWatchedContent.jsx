@@ -1,10 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Box, Heading, VStack, Spinner, Select, Text, Alert, AlertIcon, AlertTitle, AlertDescription } from '@chakra-ui/react';
-import axios from 'axios';
-import debounce from 'lodash.debounce';
 
 const MostWatchedContent = () => {
-  // State variables
   const [content, setContent] = useState([]);
   const [loading, setLoading] = useState(false);
   const [filters, setFilters] = useState({ type: 'all', genre: 'all' });
@@ -12,7 +9,6 @@ const MostWatchedContent = () => {
   const [genres, setGenres] = useState(['Action', 'Comedy', 'Drama', 'Horror', 'Sci-Fi']);
   const [weeklySummary, setWeeklySummary] = useState(null);
   const [error, setError] = useState(null);
-
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
 
@@ -22,9 +18,13 @@ const MostWatchedContent = () => {
       if (cachedSummary) {
         setWeeklySummary(JSON.parse(cachedSummary));
       } else {
-        const response = await axios.get('https://api.example.com/weekly-summary'); // Replace with actual API endpoint
-        localStorage.setItem('weeklySummary', JSON.stringify(response.data));
-        setWeeklySummary(response.data);
+        const response = await fetch('https://api.example.com/weekly-summary'); // Replace with actual API endpoint
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        localStorage.setItem('weeklySummary', JSON.stringify(data));
+        setWeeklySummary(data);
       }
     } catch (error) {
       console.error('Error fetching weekly summary:', error);
@@ -32,33 +32,24 @@ const MostWatchedContent = () => {
     }
   };
 
-  const fetchData = useCallback(
-    debounce(async (page) => {
-      setLoading(true);
-      setError(null);
-      try {
-        const response = await axios.get('https://api.example.com/content', {
-          params: {
-            page,
-            type: filters.type,
-            genre: filters.genre,
-            sort: sorting,
-          },
-        });
-
-        const data = response.data;
-
-        setContent((prevContent) => [...prevContent, ...data]);
-        setHasMore(data.length > 0); // Example condition, replace with actual logic
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        setError('Failed to fetch content data.');
-      } finally {
-        setLoading(false);
+  const fetchData = async (page) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(`https://api.example.com/content?page=${page}&type=${filters.type}&genre=${filters.genre}&sort=${sorting}`);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
       }
-    }, 500),
-    [filters, sorting]
-  );
+      const data = await response.json();
+      setContent((prevContent) => [...prevContent, ...data]);
+      setHasMore(data.length > 0); // Example condition, replace with actual logic
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      setError('Failed to fetch content data.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     fetchData(page);
@@ -114,7 +105,6 @@ const MostWatchedContent = () => {
           </Alert>
         ) : (
           <Box>
-            {/* Content will be displayed here */}
             {content.length === 0 ? (
               <Text>No content available</Text>
             ) : (
