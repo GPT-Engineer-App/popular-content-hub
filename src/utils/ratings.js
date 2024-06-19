@@ -7,7 +7,7 @@ const tmdbApiKey = process.env.REACT_APP_TMDB_API_KEY;
 
 export const fetchRottenTomatoesRatings = async (title, filters, sorting) => {
   try {
-    const response = await axios.get(`https://api.rottentomatoes.com/api/public/v1.0/movies.json?apikey=${rottenTomatoesApiKey}&q=${title}&type=${filters.type}&genre=${filters.genre}&sort=${sorting}`);
+    const response = await axios.get(`https://new-api.example.com/rotten-tomatoes?apikey=${rottenTomatoesApiKey}&q=${title}&type=${filters.type}&genre=${filters.genre}&sort=${sorting}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching Rotten Tomatoes ratings:', error);
@@ -17,7 +17,7 @@ export const fetchRottenTomatoesRatings = async (title, filters, sorting) => {
 
 export const fetchImdbRatings = async (title, filters, sorting) => {
   try {
-    const response = await axios.get(`https://imdb-api.com/en/API/SearchTitle/${imdbApiKey}/${title}?type=${filters.type}&genre=${filters.genre}&sort=${sorting}`);
+    const response = await axios.get(`https://new-api.example.com/imdb?apikey=${imdbApiKey}&q=${title}&type=${filters.type}&genre=${filters.genre}&sort=${sorting}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching IMDb ratings:', error);
@@ -27,7 +27,7 @@ export const fetchImdbRatings = async (title, filters, sorting) => {
 
 export const fetchOmdbRatings = async (title, filters, sorting) => {
   try {
-    const response = await axios.get(`http://www.omdbapi.com/?apikey=${omdbApiKey}&t=${title}&type=${filters.type}&genre=${filters.genre}&sort=${sorting}`);
+    const response = await axios.get(`https://new-api.example.com/omdb?apikey=${omdbApiKey}&q=${title}&type=${filters.type}&genre=${filters.genre}&sort=${sorting}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching OMDb ratings:', error);
@@ -37,7 +37,7 @@ export const fetchOmdbRatings = async (title, filters, sorting) => {
 
 export const fetchTmdbRatings = async (title, filters, sorting) => {
   try {
-    const response = await axios.get(`https://api.themoviedb.org/3/search/movie?api_key=${tmdbApiKey}&query=${title}&type=${filters.type}&genre=${filters.genre}&sort=${sorting}`);
+    const response = await axios.get(`https://new-api.example.com/tmdb?apikey=${tmdbApiKey}&q=${title}&type=${filters.type}&genre=${filters.genre}&sort=${sorting}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching TMDb ratings:', error);
