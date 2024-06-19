@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Heading, VStack, Spinner, Select, Text } from '@chakra-ui/react';
+import { Box, Heading, VStack, Spinner, Select, Text, Alert, AlertIcon, AlertTitle, AlertDescription } from '@chakra-ui/react';
 import axios from 'axios';
 import { fetchRottenTomatoesRatings, fetchImdbRatings, fetchOmdbRatings, fetchTmdbRatings } from '../utils/ratings';
 
@@ -11,6 +11,7 @@ const MostWatchedContent = () => {
   const [sorting, setSorting] = useState('views');
   const [genres, setGenres] = useState(['Action', 'Comedy', 'Drama', 'Horror', 'Sci-Fi']);
   const [weeklySummary, setWeeklySummary] = useState(null);
+  const [error, setError] = useState(null);
 
   const fetchWeeklySummary = async () => {
     try {
@@ -18,12 +19,14 @@ const MostWatchedContent = () => {
       setWeeklySummary(response.data);
     } catch (error) {
       console.error('Error fetching weekly summary:', error);
+      setError('Failed to fetch weekly summary.');
     }
   };
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
+      setError(null);
       try {
         const title = 'Inception'; // Example title, replace with dynamic title
         const rottenTomatoesData = await fetchRottenTomatoesRatings(title, filters, sorting);
@@ -43,6 +46,7 @@ const MostWatchedContent = () => {
         setContent([combinedData]);
       } catch (error) {
         console.error('Error fetching data:', error);
+        setError('Failed to fetch content data.');
       } finally {
         setLoading(false);
       }
@@ -82,7 +86,13 @@ const MostWatchedContent = () => {
           </Select>
         </Box>
         {loading ? (
-          <Spinner />
+          <Spinner size="xl" />
+        ) : error ? (
+          <Alert status="error">
+            <AlertIcon />
+            <AlertTitle>Error!</AlertTitle>
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
         ) : (
           <Box>
             {/* Content will be displayed here */}
