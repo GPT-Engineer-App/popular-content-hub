@@ -16,10 +16,10 @@ const MostWatchedContent = () => {
       setLoading(true);
       try {
         const title = 'Inception'; // Example title, replace with dynamic title
-        const rottenTomatoesData = await fetchRottenTomatoesRatings(title);
-        const imdbData = await fetchImdbRatings(title);
-        const omdbData = await fetchOmdbRatings(title);
-        const tmdbData = await fetchTmdbRatings(title);
+        const rottenTomatoesData = await fetchRottenTomatoesRatings(title, filters, sorting);
+        const imdbData = await fetchImdbRatings(title, filters, sorting);
+        const omdbData = await fetchOmdbRatings(title, filters, sorting);
+        const tmdbData = await fetchTmdbRatings(title, filters, sorting);
 
         // Combine data from all sources
         const combinedData = {
@@ -39,7 +39,7 @@ const MostWatchedContent = () => {
     };
 
     fetchData();
-  }, []);
+  }, [filters, sorting]);
 
   return (
     <Box p={4}>
