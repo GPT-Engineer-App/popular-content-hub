@@ -18,9 +18,9 @@ const MostWatchedContent = () => {
       if (cachedSummary) {
         setWeeklySummary(JSON.parse(cachedSummary));
       } else {
-        const response = await fetch('https://new-api.example.com/weekly-summary'); // Replace with actual new API endpoint
+        const response = await fetch('https://api.example.com/weekly-summary'); // Ensure this is the correct API endpoint
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error(`Network response was not ok: ${response.statusText}`);
         }
         const data = await response.json();
         if (data && data.summary) {
